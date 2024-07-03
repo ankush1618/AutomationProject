@@ -1,0 +1,25 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<!--tests running in cross browser for Parallel =tests-->
+<!--<suite name="MyTestSuite" parallel="tests">-->
+<!--two test classes will run parallel-->
+<!--        thread-count="2"-->
+<suite name="MyTestSuite" parallel="tests" >
+<!--    Listener will be taking screenshot and apply retry logic-->
+    <listeners>
+        <listener class-name="main.java.utils.SuiteListener"></listener>
+    </listeners>
+    <test name="Automation Test">
+        <parameter name="browserName" value="Chrome"></parameter>
+        <classes>
+            <class name="test.SampleAmazonTest"/>
+            <class name="test.SampleAmazonTest2"/>
+        </classes>
+    </test>
+    <test name="Automation Test 2">
+        <parameter name="browserName" value="Edge"></parameter>
+        <classes>
+            <class name="test.SampleAmazonTest_PageFactory"/>
+            <class name="test.SampleDataProviderTest"/>
+        </classes>
+    </test>
+</suite>

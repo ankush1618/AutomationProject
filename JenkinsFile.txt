@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        listEmails = 'singhpalankush@gmail.com'
+    }
+
+    parameters {
+        string(description: "Added branch to deploy", defaultValue: 'master', name: 'branchname')
+    }
+
+    tools {
+        // Use the installed JDK named 'jdk'
+        jdk 'jdk'
+        // Install the Maven project configured
+        maven "mvn"
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                script {
+                        git branch: params.branchname, changelog: false, credentialsId: 'Github', poll: false,
+                            url: "https://github.com/WebDeveloper16/AutomationFramework.git"
+
+                }
+            }c
+        }
+
+        stage('Build and Test') {
+            steps {
+                script {
+                    // Execute Maven clean and test phases
+                    bat "mvn clean test"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Create a Zip of HTML report
+                zip archive: true, dir: 'reports/AutomationReport', zipFile: 'AutomationReport.zip'
+
+                // Print workspace content for debugging
+                bat 'dir'
+
+                // Send email with HTML report as attachment
+                emailext subject: 'Build Successful',
+                    mimeType: 'text/html',
+                    body: "Testing Report is Generated",
+                    to: listEmails,
+                    attachLog: true,
+                    attachmentsPattern: 'reports/AutomationReport/*.zip' // Attach all zip files in the specified directory
+
+
+                // Print workspace contents for debugging
+                bat 'dir'
+            }
+        }
+    }
+}
